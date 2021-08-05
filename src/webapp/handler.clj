@@ -2,7 +2,9 @@
   (:require [webapp.views :as views] ; add this require
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.adapter.jetty :as jetty])
+  (:gen-class))
 
 (defroutes app-routes ; replace the generated app-routes with this
            (GET "/"
@@ -25,3 +27,11 @@
 
 (def app
   (wrap-defaults app-routes site-defaults))
+
+(defn -main
+  [& [port]]
+  (let [port (Integer. (or port
+                           (System/getenv "PORT")
+                           5000))]
+    (jetty/run-jetty #'app {:port  port
+                            :join? false})))
