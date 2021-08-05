@@ -28,3 +28,51 @@
     header-links
     [:h1 "Home"]
     [:p "This web app stores and displays 2D (x,y) locations."]))
+
+(defn add-location-page
+  []
+  (page/html5
+    (gen-page-head "Add a Location")
+    header-links
+    [:h1 "Add a location"]
+    [:form {:action "/add-location" :method "POST"}
+     (util/anti-forgery-field)
+     [:p "x: " [:input {:type "text" :name "x"}]]
+     [:p "y: " [:input {:type "text" :name "y"}]]
+     [:p [:input {:type "submit" :value "submit location"}]]]))
+
+
+(defn add-location-results-page
+  [{:keys [x y]}]
+  (let [id (db/add-location-to-db x y)]
+    (page/html5
+      (gen-page-head "Added a location")
+      header-links
+      [:h1 "Added a location"]
+      [:p "Added [" x ", " y "] (id: " id ") to the db."
+       [:a {:href (str "/location/" id)} "Check"]
+       "."])))
+
+
+(defn location-page
+  [loc-id]
+  (let [{x :x y :y} (db/get-xy loc-id)]
+    (page/html5
+      (gen-page-head (str "location " loc-id))
+      header-links
+      [:h1 "A given location"]
+      [:p "id: " loc-id]
+      [:p "x: " x]
+      [:p "y: " y])))
+
+(defn all-locations-page
+  []
+  (let [all-locs (db/get-all-locations)]
+    (page/html5
+      (gen-page-head "All locations in the database")
+      header-links
+      [:h1 "All locations"]
+      [:table
+       [:tr [:th "id"] [:th "x"] [:th "y"]]
+       (for [loc all-locs]
+         [:tr [:td (:id loc)] [:td (:x loc)] [:td (:y loc)]])])))
