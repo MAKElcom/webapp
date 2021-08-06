@@ -87,7 +87,7 @@
   (page/html5
     (gen-page-head "Add a Paste")
     header-links
-    [:h1 "Add a Paste"]
+    [:h1 "Add a Paste!"]
     [:form {:action "/add-paste" :method "POST"}
      (util/anti-forgery-field) ; prevents cross-site scripting attacks
      [:p "content: " [:input {:type "text" :name "content"}]]

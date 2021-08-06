@@ -8,7 +8,8 @@
                  [ring/ring-jetty-adapter "1.8.1"]
                  [hiccup "1.0.5"]
                  [org.clojure/java.jdbc "0.6.0"]
-                 [com.h2database/h2 "1.4.193"]]
+                 [com.h2database/h2 "1.4.193"]
+                 [com.layerware/hugsql "0.5.1"]]
   :plugins [[lein-ring "0.12.5"]]
   :ring {:handler webapp.handler/app}
   :profiles
@@ -16,4 +17,5 @@
                         [ring/ring-mock "0.3.2"]
                         [hiccup "1.0.5"]
                         [org.clojure/java.jdbc "0.6.0"]
-                        [com.h2database/h2 "1.4.193"]]}})
+                        [com.h2database/h2 "1.4.193"]
+                        [com.layerware/hugsql "0.5.1"]]}})

@@ -1,41 +1,41 @@
 (ns webapp.db
-  (:require [clojure.java.jdbc :as jdbc]))
+  (:require [clojure.java.jdbc :as jdbc]
+            [db.locations :as locations]))
 
-(def db-spec {:dbtype "h2" :dbname "./webapp"})
+(def db {:dbtype "h2" :dbname "./webapp"})
 
 (defn add-location-to-db
   [x y]
-  (let [results (jdbc/insert! db-spec :locations {:x x :y y})]
-    (assert (= (count results) 1))
-    (first (vals (first results)))))
+  (let [results (locations/insert-new-location db {:x x :y y})]
+    (assert (= results 1))
+    results))
 
 (defn get-xy
   [loc-id]
-  (let [results (jdbc/query db-spec
-                            ["select x, y from locations where id = ?" loc-id])]
+  (let [results (locations/get-coord db {:id loc-id})]
     (assert (= (count results) 1))
     (first results)))
 
 
 (defn add-paste-to-db
   [content]
-  (let [results (jdbc/insert! db-spec :pastes {:content content})]
+  (let [results (jdbc/insert! db :pastes {:content content})]
     (assert (= (count results) 1))
     (first (vals (first results)))))
 
 
 (defn get-paste
   [paste-id]
-  (let [results (jdbc/query db-spec
+  (let [results (jdbc/query db
                             ["SELECT content FROM pastes WHERE id = ?" paste-id])]
     (assert (= (count results) 1))
     (first results)))
 
 (defn get-all-pastes
   []
-  (jdbc/query db-spec "SELECT id, content FROM pastes"))
+  (jdbc/query db "SELECT id, content FROM pastes"))
 
 
 (defn get-all-locations
   []
-  (jdbc/query db-spec "select id, x, y from locations"))
+  (locations/get-all-coords db))
