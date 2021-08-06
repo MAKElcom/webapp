@@ -1,6 +1,7 @@
 (ns webapp.db
   (:require [clojure.java.jdbc :as jdbc]
-            [db.locations :as locations]))
+            [db.locations :as locations]
+            [db.pastes :as pastes]))
 
 (def db {:dbtype "h2" :dbname "./webapp"})
 
@@ -19,21 +20,20 @@
 
 (defn add-paste-to-db
   [content]
-  (let [results (jdbc/insert! db :pastes {:content content})]
-    (assert (= (count results) 1))
-    (first (vals (first results)))))
+  (let [results (pastes/insert-new-paste db {:content content})]
+    (assert (= results 1))
+    results))
 
 
 (defn get-paste
   [paste-id]
-  (let [results (jdbc/query db
-                            ["SELECT content FROM pastes WHERE id = ?" paste-id])]
+  (let [results (pastes/get-paste db {:id paste-id})]
     (assert (= (count results) 1))
     (first results)))
 
 (defn get-all-pastes
   []
-  (jdbc/query db "SELECT id, content FROM pastes"))
+  (pastes/get-all-pastes db))
 
 
 (defn get-all-locations

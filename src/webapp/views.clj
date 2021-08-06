@@ -114,6 +114,11 @@
       [:h1 "id: " paste-id]
       [:p content])))
 
+(defn trunc
+  [s n]
+  (if (> (count s) n)
+    (str (apply str (take n s)) "...")
+    s))
 
 (defn all-pastes-page
   []
@@ -125,4 +130,4 @@
       [:table
        [:tr [:th "id"] [:th "content"]]
        (for [paste all-pastes]
-         [:tr [:td (:id paste)] [:td (:content paste)]])])))
+         [:tr [:td (:id paste)] [:td (trunc (get paste :content) 34)]])])))
