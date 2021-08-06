@@ -18,6 +18,10 @@
    [:a {:href "/add-location"} "Add a Location"]
    " | "
    [:a {:href "/all-locations"} "View all Locations"]
+   " |"
+   [:a {:href "/add-paste"} "Add a paste"]
+   " | "
+   [:a {:href "/all-pastes"} "View all pastes"]
    " ]"])
 
 (defn home-page
@@ -75,3 +79,50 @@
        [:tr [:th "id"] [:th "x"] [:th "y"]]
        (for [loc all-locs]
          [:tr [:td (:id loc)] [:td (:x loc)] [:td (:y loc)]])])))
+
+
+
+(defn add-paste-page
+  []
+  (page/html5
+    (gen-page-head "Add a Paste")
+    header-links
+    [:h1 "Add a Paste"]
+    [:form {:action "/add-paste" :method "POST"}
+     (util/anti-forgery-field) ; prevents cross-site scripting attacks
+     [:p "content: " [:input {:type "text" :name "content"}]]
+     [:p [:input {:type "submit" :value "submit paste"}]]]))
+
+
+(defn add-paste-results-page
+  [{:keys [content]}]
+  (let [id (db/add-paste-to-db content)]
+    (page/html5
+      (gen-page-head "Pasted!")
+      header-links
+      [:h1 "Pasted!"]
+      [:p "Added (id: " id ") to the db. "
+       [:a {:href (str "/paste/" id)} "More"]
+       "."])))
+
+(defn paste-page
+  [paste-id]
+  (let [{content :content} (db/get-paste paste-id)]
+    (page/html5
+      (gen-page-head (str "paste " paste-id))
+      header-links
+      [:h1 "id: " paste-id]
+      [:p content])))
+
+
+(defn all-pastes-page
+  []
+  (let [all-pastes (db/get-all-pastes)]
+    (page/html5
+      (gen-page-head "All pastes in the database")
+      header-links
+      [:h1 "All pastes"]
+      [:table
+       [:tr [:th "id"] [:th "content"]]
+       (for [paste all-pastes]
+         [:tr [:td (:id paste)] [:td (:content paste)]])])))
